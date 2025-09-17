@@ -5,6 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import { 
   Zap, 
@@ -32,6 +34,8 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from 'react-native-reanimated';
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const iconMap: { [key: string]: React.ComponentType<any> } = {
   refrigerator: Refrigerator,
@@ -77,7 +81,7 @@ export default function SummaryScreen() {
 
   if (selectedAppliances.length === 0) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <Animated.View style={[styles.header, animatedHeaderStyle]}>
           <View style={styles.logoContainer}>
             <Zap size={40} color="#2563EB" />
@@ -121,12 +125,17 @@ export default function SummaryScreen() {
             </View>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
       <Animated.View style={[styles.header, animatedHeaderStyle]}>
         <View style={styles.logoContainer}>
           <Zap size={40} color="#2563EB" />
@@ -240,7 +249,8 @@ export default function SummaryScreen() {
           {currentTip.text}
         </Text>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -249,39 +259,46 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FAFC',
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   header: {
     alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 32,
-    paddingHorizontal: 24,
+    paddingTop: Math.max(20, screenHeight * 0.02),
+    paddingBottom: Math.max(20, screenHeight * 0.03),
+    paddingHorizontal: Math.max(16, screenWidth * 0.04),
   },
   logoContainer: {
-    width: 80,
-    height: 80,
+    width: Math.min(80, screenWidth * 0.2),
+    height: Math.min(80, screenWidth * 0.2),
     backgroundColor: '#EBF4FF',
-    borderRadius: 20,
+    borderRadius: Math.min(20, screenWidth * 0.05),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
   },
   appTitle: {
-    fontSize: 32,
+    fontSize: Math.min(32, screenWidth * 0.08),
     fontWeight: '800',
     color: '#1F2937',
     marginBottom: 4,
+    textAlign: 'center',
   },
   appSubtitle: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     color: '#6B7280',
     fontWeight: '500',
     textAlign: 'center',
   },
   summaryCard: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 24,
-    marginBottom: 24,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(16, screenHeight * 0.02),
     borderRadius: 16,
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -292,7 +309,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   summaryTitle: {
-    fontSize: 20,
+    fontSize: Math.min(20, screenWidth * 0.05),
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 20,
@@ -306,15 +323,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   totalLabel: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     color: '#6B7280',
     fontWeight: '500',
     marginBottom: 8,
+    textAlign: 'center',
   },
   totalValue: {
-    fontSize: 36,
+    fontSize: Math.min(36, screenWidth * 0.09),
     fontWeight: '800',
     color: '#2563EB',
+    textAlign: 'center',
   },
   statsRow: {
     flexDirection: 'row',
@@ -325,16 +344,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statLabel: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#6B7280',
     fontWeight: '500',
     marginTop: 8,
     marginBottom: 4,
+    textAlign: 'center',
   },
   statValue: {
-    fontSize: 18,
+    fontSize: Math.min(18, screenWidth * 0.045),
     fontWeight: '700',
     color: '#1F2937',
+    textAlign: 'center',
   },
   additionalStats: {
     alignItems: 'center',
@@ -344,11 +365,11 @@ const styles = StyleSheet.create({
     borderTopColor: '#E5E7EB',
   },
   appliancesList: {
-    marginHorizontal: 24,
-    marginBottom: 24,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(16, screenHeight * 0.02),
   },
   listTitle: {
-    fontSize: 20,
+    fontSize: Math.min(20, screenWidth * 0.05),
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 16,
@@ -356,7 +377,7 @@ const styles = StyleSheet.create({
   applianceItem: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 16,
+    padding: Math.max(12, screenWidth * 0.03),
     marginBottom: 12,
     shadowColor: '#000',
     shadowOffset: {
@@ -389,7 +410,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   applianceName: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#1F2937',
     flex: 1,
@@ -407,13 +428,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   applianceUsage: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#6B7280',
     fontWeight: '500',
     marginBottom: 2,
   },
   applianceCost: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     fontWeight: '700',
     color: '#2563EB',
   },
@@ -429,10 +450,10 @@ const styles = StyleSheet.create({
   },
   rateCard: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 24,
-    marginBottom: 24,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(16, screenHeight * 0.02),
     borderRadius: 12,
-    padding: 20,
+    padding: Math.max(16, screenWidth * 0.04),
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -444,31 +465,34 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   rateTitle: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#374151',
     marginBottom: 8,
+    textAlign: 'center',
   },
   rateValue: {
-    fontSize: 24,
+    fontSize: Math.min(24, screenWidth * 0.06),
     fontWeight: '700',
     color: '#2563EB',
     marginBottom: 4,
+    textAlign: 'center',
   },
   rateNote: {
-    fontSize: 12,
+    fontSize: Math.min(12, screenWidth * 0.03),
     color: '#9CA3AF',
     fontWeight: '500',
+    textAlign: 'center',
   },
   emptyState: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
-    marginBottom: 32,
+    paddingHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(16, screenHeight * 0.02),
   },
   emptyTitle: {
-    fontSize: 24,
+    fontSize: Math.min(24, screenWidth * 0.06),
     fontWeight: '700',
     color: '#374151',
     marginTop: 24,
@@ -476,29 +500,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     color: '#6B7280',
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: 32,
+    marginBottom: Math.max(24, screenHeight * 0.03),
   },
   selectButton: {
     backgroundColor: '#2563EB',
-    paddingHorizontal: 32,
-    paddingVertical: 16,
+    paddingHorizontal: Math.max(24, screenWidth * 0.06),
+    paddingVertical: Math.max(12, screenHeight * 0.015),
     borderRadius: 12,
   },
   selectButtonText: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#FFFFFF',
   },
   featuresCard: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 24,
-    marginBottom: 32,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(24, screenHeight * 0.03),
     borderRadius: 16,
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -509,7 +533,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   featuresTitle: {
-    fontSize: 18,
+    fontSize: Math.min(18, screenWidth * 0.045),
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 16,
@@ -523,28 +547,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   featureText: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#6B7280',
     marginLeft: 12,
     flex: 1,
   },
   tipCard: {
     backgroundColor: '#FEF3C7',
-    marginHorizontal: 24,
-    marginBottom: 32,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(24, screenHeight * 0.03),
     borderRadius: 12,
-    padding: 16,
+    padding: Math.max(16, screenWidth * 0.04),
     borderLeftWidth: 4,
     borderLeftColor: '#F59E0B',
   },
   tipTitle: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#92400E',
     marginBottom: 8,
   },
   tipText: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#78350F',
     lineHeight: 20,
   },

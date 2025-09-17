@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import { Settings as SettingsIcon, Zap, Info } from 'lucide-react-native';
 import { useAppliances } from '@/context/ApplianceContext';
@@ -14,11 +15,12 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
   interpolateColor,
+  runOnJS,
 } from 'react-native-reanimated';
 import { Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
-const { width } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 interface SliderProps {
   label: string;
@@ -32,11 +34,15 @@ interface SliderProps {
 }
 
 function CustomSlider({ label, value, min, max, step, unit, color, onValueChange }: SliderProps) {
-  const sliderWidth = width - 64;
+  const sliderWidth = Math.min(screenWidth - 80, 300);
   const knobSize = 28;
   
   const translateX = useSharedValue(((value - min) / (max - min)) * (sliderWidth - knobSize));
   const isPressed = useSharedValue(false);
+
+  const updateValue = (newValue: number) => {
+    onValueChange(newValue);
+  };
 
   const animatedKnobStyle = useAnimatedStyle(() => {
     const scale = isPressed.value ? 1.2 : 1;
@@ -59,7 +65,7 @@ function CustomSlider({ label, value, min, max, step, unit, color, onValueChange
   const animatedTrackStyle = useAnimatedStyle(() => {
     const activeWidth = translateX.value + knobSize / 2;
     return {
-      width: withSpring(activeWidth),
+      width: withSpring(Math.max(0, Math.min(sliderWidth, activeWidth))),
       backgroundColor: color,
     };
   });
@@ -68,7 +74,11 @@ function CustomSlider({ label, value, min, max, step, unit, color, onValueChange
     .onStart(() => {
       isPressed.value = true;
       if (Platform.OS !== 'web') {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        try {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          // Haptics not available, continue silently
+        }
       }
     })
     .onUpdate((event) => {
@@ -77,12 +87,18 @@ function CustomSlider({ label, value, min, max, step, unit, color, onValueChange
       
       const newValue = min + (newX / (sliderWidth - knobSize)) * (max - min);
       const steppedValue = Math.round(newValue / step) * step;
-      onValueChange(Math.max(min, Math.min(max, steppedValue)));
+      const clampedValue = Math.max(min, Math.min(max, steppedValue));
+      
+      runOnJS(updateValue)(clampedValue);
     })
     .onEnd(() => {
       isPressed.value = false;
       translateX.value = ((value - min) / (max - min)) * (sliderWidth - knobSize);
     });
+
+  React.useEffect(() => {
+    translateX.value = ((value - min) / (max - min)) * (sliderWidth - knobSize);
+  }, [value, min, max, sliderWidth]);
 
   return (
     <View style={styles.sliderContainer}>
@@ -95,7 +111,7 @@ function CustomSlider({ label, value, min, max, step, unit, color, onValueChange
           </GestureDetector>
         </View>
         <Text style={[styles.sliderValue, { color }]}>
-          {value} {unit}
+          {value.toFixed(2)} {unit}
         </Text>
       </View>
     </View>
@@ -106,61 +122,67 @@ export default function SettingsScreen() {
   const { ratePerKwh, updateElectricityRate, selectedAppliances, currentTip } = useAppliances();
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <View style={styles.iconContainer}>
-          <SettingsIcon size={40} color="#2563EB" />
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.header}>
+          <View style={styles.iconContainer}>
+            <SettingsIcon size={Math.min(40, screenWidth * 0.1)} color="#2563EB" />
+          </View>
+          <Text style={styles.title}>Settings</Text>
+          <Text style={styles.subtitle}>Configure your electricity settings</Text>
         </View>
-        <Text style={styles.title}>Settings</Text>
-        <Text style={styles.subtitle}>Configure your electricity settings</Text>
-      </View>
 
-      <View style={styles.settingsCard}>
-        <CustomSlider
-          label="Electricity Rate"
-          value={ratePerKwh}
-          min={8.0}
-          max={25.0}
-          step={0.25}
-          unit="₱/kWh"
-          color="#2563EB"
-          onValueChange={updateElectricityRate}
-        />
+        <View style={styles.settingsCard}>
+          <CustomSlider
+            label="Electricity Rate"
+            value={ratePerKwh}
+            min={8.0}
+            max={25.0}
+            step={0.25}
+            unit="₱/kWh"
+            color="#2563EB"
+            onValueChange={updateElectricityRate}
+          />
 
-        <View style={styles.rateInfo}>
-          <Info size={16} color="#6B7280" />
-          <Text style={styles.rateInfoText}>
-            Philippine electricity rates typically range from ₱8-₱20 per kWh depending on your location and provider.
+          <View style={styles.rateInfo}>
+            <Info size={16} color="#6B7280" />
+            <Text style={styles.rateInfoText}>
+              Philippine electricity rates typically range from ₱8-₱20 per kWh depending on your location and provider.
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.infoCard}>
+          <Text style={styles.infoTitle}>App Information</Text>
+          
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Selected Appliances</Text>
+            <Text style={styles.infoValue}>{selectedAppliances.length}</Text>
+          </View>
+          
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Version</Text>
+            <Text style={styles.infoValue}>1.0.0</Text>
+          </View>
+          
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Developer</Text>
+            <Text style={styles.infoValue}>John Rayven G. Bulanadi</Text>
+          </View>
+        </View>
+
+        <View style={styles.tipCard}>
+          <Text style={styles.tipTitle}>{currentTip.title}</Text>
+          <Text style={styles.tipText}>
+            {currentTip.text}
           </Text>
         </View>
-      </View>
-
-      <View style={styles.infoCard}>
-        <Text style={styles.infoTitle}>App Information</Text>
-        
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Selected Appliances</Text>
-          <Text style={styles.infoValue}>{selectedAppliances.length}</Text>
-        </View>
-        
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Version</Text>
-          <Text style={styles.infoValue}>1.0.0</Text>
-        </View>
-        
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Developer</Text>
-          <Text style={styles.infoValue}>John Rayven G. Bulanadi</Text>
-        </View>
-      </View>
-
-      <View style={styles.tipCard}>
-        <Text style={styles.tipTitle}>{currentTip.title}</Text>
-        <Text style={styles.tipText}>
-          {currentTip.text}
-        </Text>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -169,38 +191,46 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FAFC',
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   header: {
     alignItems: 'center',
-    paddingTop: 60,
-    paddingBottom: 32,
-    paddingHorizontal: 24,
+    paddingTop: Math.max(20, screenHeight * 0.02),
+    paddingBottom: Math.max(20, screenHeight * 0.03),
+    paddingHorizontal: Math.max(16, screenWidth * 0.04),
   },
   iconContainer: {
-    width: 80,
-    height: 80,
+    width: Math.min(80, screenWidth * 0.2),
+    height: Math.min(80, screenWidth * 0.2),
     backgroundColor: '#EBF4FF',
-    borderRadius: 20,
+    borderRadius: Math.min(20, screenWidth * 0.05),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
   },
   title: {
-    fontSize: 28,
+    fontSize: Math.min(28, screenWidth * 0.07),
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 4,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     color: '#6B7280',
     fontWeight: '500',
+    textAlign: 'center',
   },
   settingsCard: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 24,
-    marginBottom: 24,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(16, screenHeight * 0.02),
     borderRadius: 16,
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -212,15 +242,18 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     marginBottom: 24,
+    alignItems: 'center',
   },
   sliderLabel: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#374151',
     marginBottom: 12,
+    textAlign: 'center',
   },
   sliderWrapper: {
     alignItems: 'center',
+    width: '100%',
   },
   sliderTrack: {
     height: 6,
@@ -254,8 +287,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   sliderValue: {
-    fontSize: 18,
+    fontSize: Math.min(18, screenWidth * 0.045),
     fontWeight: '700',
+    textAlign: 'center',
   },
   rateInfo: {
     flexDirection: 'row',
@@ -265,7 +299,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   rateInfoText: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#6B7280',
     marginLeft: 8,
     flex: 1,
@@ -273,10 +307,10 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 24,
-    marginBottom: 24,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(16, screenHeight * 0.02),
     borderRadius: 16,
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -287,10 +321,11 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   infoTitle: {
-    fontSize: 18,
+    fontSize: Math.min(18, screenWidth * 0.045),
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 16,
+    textAlign: 'center',
   },
   infoRow: {
     flexDirection: 'row',
@@ -301,32 +336,34 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F3F4F6',
   },
   infoLabel: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '500',
     color: '#374151',
+    flex: 1,
   },
   infoValue: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#6B7280',
+    textAlign: 'right',
   },
   tipCard: {
     backgroundColor: '#FEF3C7',
-    marginHorizontal: 24,
-    marginBottom: 32,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(16, screenHeight * 0.02),
     borderRadius: 12,
-    padding: 16,
+    padding: Math.max(16, screenWidth * 0.04),
     borderLeftWidth: 4,
     borderLeftColor: '#F59E0B',
   },
   tipTitle: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#92400E',
     marginBottom: 8,
   },
   tipText: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#78350F',
     lineHeight: 20,
   },

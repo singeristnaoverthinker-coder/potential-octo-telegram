@@ -6,6 +6,7 @@ import {
   Dimensions,
   ScrollView,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -20,7 +21,7 @@ import { useAppliances } from '@/context/ApplianceContext';
 import { ArrowLeft } from 'lucide-react-native';
 import { router } from 'expo-router';
 
-const { width } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 interface ApplianceCalculatorProps {
   applianceName: string;
@@ -44,7 +45,7 @@ interface SliderProps {
 }
 
 function CustomSlider({ label, value, min, max, step, unit, color, onValueChange }: SliderProps) {
-  const sliderWidth = width - 64;
+  const sliderWidth = Math.min(screenWidth - 64, 300);
   const knobSize = 28;
   const trackHeight = 6;
   
@@ -158,7 +159,12 @@ export default function ApplianceCalculator({
   }, [wattage, hoursPerDay, onUpdateUsage]);
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
@@ -253,7 +259,8 @@ export default function ApplianceCalculator({
           {currentTip.text}
         </Text>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -262,10 +269,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F8FAFC',
   },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   header: {
-    paddingTop: 60,
-    paddingBottom: 32,
-    paddingHorizontal: 24,
+    paddingTop: Math.max(20, screenHeight * 0.02),
+    paddingBottom: Math.max(20, screenHeight * 0.03),
+    paddingHorizontal: Math.max(16, screenWidth * 0.04),
   },
   backButton: {
     width: 40,
@@ -288,31 +301,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 20,
+    width: Math.min(80, screenWidth * 0.2),
+    height: Math.min(80, screenWidth * 0.2),
+    borderRadius: Math.min(20, screenWidth * 0.05),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 16,
   },
   applianceName: {
-    fontSize: 28,
+    fontSize: Math.min(28, screenWidth * 0.07),
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 4,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     color: '#6B7280',
     fontWeight: '500',
   },
   calculatorCard: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 24,
-    marginBottom: 24,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(16, screenHeight * 0.02),
     borderRadius: 16,
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -326,13 +339,15 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   sliderLabel: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#374151',
     marginBottom: 12,
+    textAlign: 'center',
   },
   sliderWrapper: {
     alignItems: 'center',
+    width: '100%',
   },
   sliderTrack: {
     height: 6,
@@ -366,8 +381,9 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   sliderValue: {
-    fontSize: 18,
+    fontSize: Math.min(18, screenWidth * 0.045),
     fontWeight: '700',
+    textAlign: 'center',
   },
   rateDisplay: {
     backgroundColor: '#F9FAFB',
@@ -376,27 +392,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rateLabel: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#6B7280',
     fontWeight: '500',
     marginBottom: 4,
+    textAlign: 'center',
   },
   rateValue: {
-    fontSize: 18,
+    fontSize: Math.min(18, screenWidth * 0.045),
     fontWeight: '700',
     marginBottom: 4,
+    textAlign: 'center',
   },
   rateNote: {
-    fontSize: 12,
+    fontSize: Math.min(12, screenWidth * 0.03),
     color: '#9CA3AF',
     fontWeight: '500',
+    textAlign: 'center',
   },
   resultsCard: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 24,
-    marginBottom: 24,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(16, screenHeight * 0.02),
     borderRadius: 16,
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -407,7 +426,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   resultsTitle: {
-    fontSize: 20,
+    fontSize: Math.min(20, screenWidth * 0.05),
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 20,
@@ -423,15 +442,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   resultLabel: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#6B7280',
     fontWeight: '500',
     marginBottom: 4,
     textAlign: 'center',
   },
   resultValue: {
-    fontSize: 18,
+    fontSize: Math.min(18, screenWidth * 0.045),
     fontWeight: '700',
+    textAlign: 'center',
   },
   totalCostContainer: {
     borderRadius: 12,
@@ -440,32 +460,34 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   totalCostLabel: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     color: '#374151',
     fontWeight: '600',
     marginBottom: 8,
+    textAlign: 'center',
   },
   totalCostValue: {
-    fontSize: 32,
+    fontSize: Math.min(32, screenWidth * 0.08),
     fontWeight: '800',
+    textAlign: 'center',
   },
   tipContainer: {
     backgroundColor: '#FEF3C7',
-    marginHorizontal: 24,
-    marginBottom: 32,
+    marginHorizontal: Math.max(16, screenWidth * 0.04),
+    marginBottom: Math.max(24, screenHeight * 0.03),
     borderRadius: 12,
-    padding: 16,
+    padding: Math.max(16, screenWidth * 0.04),
     borderLeftWidth: 4,
     borderLeftColor: '#F59E0B',
   },
   tipTitle: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#92400E',
     marginBottom: 8,
   },
   tipText: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#78350F',
     lineHeight: 20,
   },

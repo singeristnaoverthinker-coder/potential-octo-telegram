@@ -8,6 +8,8 @@ import {
   Modal,
   TextInput,
   Alert,
+  Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import { Refrigerator, Wind, Shirt, Monitor, Fan, Droplets, Microwave, Plus, X, Check, Trash2, Zap, Lightbulb, Coffee, Tv, Cpu, Smartphone, Laptop, Gamepad2, Speaker, Router, Printer, Camera, Headphones, Battery, Plug, Chrome as Home, Car, Flame, Snowflake, Sun, Moon, Clock, Power, Volume2, Wifi, Bluetooth, Radio, Music, Video, Image, FileText, Calculator, Thermometer, Activity, Settings, PenTool as Tool, Wrench, Hammer, Scissors, PaintBucket, Brush, Palette, Eye, Heart, Star, Shield, Lock, Key, Bell, Mail, Phone, MessageCircle, Send, Download, Upload, Share, Copy, Save, Folder, File, Search, Filter, Import as Sort, Grid2x2 as Grid, List, Map, Navigation, Compass, Globe, Cloud, CloudRain, CloudSnow, Umbrella, TreePine, Flower, Leaf, Apple, Coffee as CoffeeIcon, Wine, Pizza, Utensils, ChefHat, IceCreamBowl as IceCream, Cake, Cookie, Candy, Gift, ShoppingCart, CreditCard, Wallet, Coins, DollarSign, TrendingUp, TrendingDown, ChartBar as BarChart, ChartPie as PieChart, ChartLine as LineChart, Target, Award, Trophy, Medal, Flag, Bookmark, Tag, Hash, AtSign, Percent, Plus as PlusIcon, Minus, Equal, Divide, X as XIcon, Check as CheckIcon, TriangleAlert as AlertTriangle, CircleAlert as AlertCircle, Info, CircleHelp as HelpCircle, FileQuestion as Question, Radiation as Exclamation } from 'lucide-react-native';
 import { useAppliances } from '@/context/ApplianceContext';
@@ -19,6 +21,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const iconMap: { [key: string]: React.ComponentType<any> } = {
   refrigerator: Refrigerator,
@@ -354,7 +358,7 @@ export default function AppliancesScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Select Appliances</Text>
         <Text style={styles.subtitle}>Choose appliances to track and add custom ones</Text>
@@ -586,7 +590,7 @@ export default function AppliancesScreen() {
           </View>
         </Animated.View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -596,31 +600,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
   },
   header: {
-    paddingTop: 60,
-    paddingBottom: 24,
-    paddingHorizontal: 24,
+    paddingTop: Math.max(20, screenHeight * 0.02),
+    paddingBottom: Math.max(16, screenHeight * 0.02),
+    paddingHorizontal: Math.max(16, screenWidth * 0.04),
     alignItems: 'center',
   },
   title: {
-    fontSize: 28,
+    fontSize: Math.min(28, screenWidth * 0.07),
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 4,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     color: '#6B7280',
     fontWeight: '500',
     textAlign: 'center',
   },
   appliancesList: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: Math.max(16, screenWidth * 0.04),
   },
   applianceCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
+    padding: Math.max(16, screenWidth * 0.04),
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: {
@@ -638,8 +643,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconContainer: {
-    width: 60,
-    height: 60,
+    width: Math.min(60, screenWidth * 0.15),
+    height: Math.min(60, screenWidth * 0.15),
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
@@ -649,19 +654,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   applianceName: {
-    fontSize: 18,
+    fontSize: Math.min(18, screenWidth * 0.045),
     fontWeight: '600',
     color: '#1F2937',
     marginBottom: 4,
   },
   applianceWattage: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#6B7280',
     fontWeight: '500',
     marginBottom: 2,
   },
   applianceDefault: {
-    fontSize: 12,
+    fontSize: Math.min(12, screenWidth * 0.03),
     color: '#9CA3AF',
     fontWeight: '500',
   },
@@ -691,7 +696,7 @@ const styles = StyleSheet.create({
     marginBottom: 100,
   },
   addNewTitle: {
-    fontSize: 20,
+    fontSize: Math.min(20, screenWidth * 0.05),
     fontWeight: '700',
     color: '#1F2937',
     marginBottom: 16,
@@ -700,7 +705,7 @@ const styles = StyleSheet.create({
   addNewCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
+    padding: Math.max(16, screenWidth * 0.04),
     borderWidth: 2,
     borderColor: '#E5E7EB',
     borderStyle: 'dashed',
@@ -710,8 +715,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addNewIcon: {
-    width: 60,
-    height: 60,
+    width: Math.min(60, screenWidth * 0.15),
+    height: Math.min(60, screenWidth * 0.15),
     borderRadius: 16,
     backgroundColor: '#F3F4F6',
     alignItems: 'center',
@@ -722,13 +727,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   addNewLabel: {
-    fontSize: 18,
+    fontSize: Math.min(18, screenWidth * 0.045),
     fontWeight: '600',
     color: '#374151',
     marginBottom: 4,
   },
   addNewSubtitle: {
-    fontSize: 14,
+    fontSize: Math.min(14, screenWidth * 0.035),
     color: '#6B7280',
     fontWeight: '500',
   },
@@ -737,24 +742,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     width: '100%',
+    maxWidth: Math.min(400, screenWidth * 0.9),
     maxHeight: '90%',
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: Math.min(20, screenWidth * 0.05),
     fontWeight: '700',
     color: '#1F2937',
   },
@@ -767,7 +773,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F4F6',
   },
   formContainer: {
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
     maxHeight: 400,
   },
   inputGroup: {
@@ -777,7 +783,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   inputLabel: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#374151',
     marginBottom: 8,
@@ -786,8 +792,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#D1D5DB',
     borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
+    padding: Math.max(10, screenWidth * 0.025),
+    fontSize: Math.min(16, screenWidth * 0.04),
     backgroundColor: '#F9FAFB',
     color: '#1F2937',
   },
@@ -833,7 +839,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   helperText: {
-    fontSize: 12,
+    fontSize: Math.min(12, screenWidth * 0.03),
     color: '#6B7280',
     fontStyle: 'italic',
   },
@@ -841,7 +847,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   previewLabel: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#374151',
     marginBottom: 12,
@@ -851,7 +857,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F9FAFB',
     borderRadius: 12,
-    padding: 16,
+    padding: Math.max(12, screenWidth * 0.03),
     borderWidth: 2,
   },
   previewIcon: {
@@ -863,18 +869,18 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   previewName: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#1F2937',
     flex: 1,
   },
   previewWattage: {
-    fontSize: 12,
+    fontSize: Math.min(12, screenWidth * 0.03),
     color: '#6B7280',
   },
   modalActions: {
     flexDirection: 'row',
-    padding: 24,
+    padding: Math.max(16, screenWidth * 0.04),
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
   },
@@ -888,7 +894,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F4F6',
   },
   cancelButtonText: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#6B7280',
   },
@@ -901,7 +907,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   addButtonText: {
-    fontSize: 16,
+    fontSize: Math.min(16, screenWidth * 0.04),
     fontWeight: '600',
     color: '#FFFFFF',
   },
