@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { useAppliances } from '@/context/ApplianceContext';
-import { ChartBar as BarChart3, Zap, Settings } from 'lucide-react-native';
+import { ChartBar as BarChart3, Zap, Settings, Trophy } from 'lucide-react-native';
 
 export default function TabLayout() {
   const { rotateTip } = useAppliances();
@@ -46,6 +46,18 @@ export default function TabLayout() {
           title: 'Appliances',
           tabBarIcon: ({ size, color }) => (
             <Zap size={size} color={color} />
+          ),
+        }}
+        listeners={{
+          tabPress: handleTabPress,
+        }}
+      />
+      <Tabs.Screen
+        name="gamification"
+        options={{
+          title: 'Progress',
+          tabBarIcon: ({ size, color }) => (
+            <Trophy size={size} color={color} />
           ),
         }}
         listeners={{
