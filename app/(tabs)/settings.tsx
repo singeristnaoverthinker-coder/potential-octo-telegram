@@ -19,6 +19,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -37,78 +38,62 @@ function CustomSlider({ label, value, min, max, step, unit, color, onValueChange
   const sliderWidth = Math.min(screenWidth - 80, 300);
   const knobSize = 28;
   
-  const translateX = useSharedValue(((value - min) / (max - min)) * (sliderWidth - knobSize));
-  const isPressed = useSharedValue(false);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [knobPosition, setKnobPosition] = React.useState(((value - min) / (max - min)) * (sliderWidth - knobSize));
 
-  const updateValue = (newValue: number) => {
-    onValueChange(newValue);
-  };
+  React.useEffect(() => {
+    setKnobPosition(((value - min) / (max - min)) * (sliderWidth - knobSize));
+  }, [value, min, max, sliderWidth]);
 
-  const animatedKnobStyle = useAnimatedStyle(() => {
-    const scale = isPressed.value ? 1.2 : 1;
-    const backgroundColor = interpolateColor(
-      isPressed.value ? 1 : 0,
-      [0, 1],
-      [color, '#FFFFFF']
-    );
-
-    return {
-      transform: [
-        { translateX: translateX.value },
-        { scale: withSpring(scale) },
-      ],
-      backgroundColor: withSpring(backgroundColor),
-      borderColor: color,
-    };
-  });
-
-  const animatedTrackStyle = useAnimatedStyle(() => {
-    const activeWidth = translateX.value + knobSize / 2;
-    return {
-      width: withSpring(Math.max(0, Math.min(sliderWidth, activeWidth))),
-      backgroundColor: color,
-    };
-  });
-
-  const gesture = Gesture.Pan()
-    .onStart(() => {
-      isPressed.value = true;
+  const handlePanGestureEvent = (event: any) => {
+    const { translationX, state } = event.nativeEvent;
+    
+    if (state === State.BEGAN) {
+      setIsDragging(true);
       if (Platform.OS !== 'web') {
         try {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         } catch (error) {
-          // Haptics not available, continue silently
+          // Haptics not available
         }
       }
-    })
-    .onUpdate((event) => {
-      const newX = Math.max(0, Math.min(sliderWidth - knobSize, event.translationX + translateX.value));
-      translateX.value = newX;
-      
+    } else if (state === State.ACTIVE) {
+      const newX = Math.max(0, Math.min(sliderWidth - knobSize, knobPosition + translationX));
       const newValue = min + (newX / (sliderWidth - knobSize)) * (max - min);
       const steppedValue = Math.round(newValue / step) * step;
       const clampedValue = Math.max(min, Math.min(max, steppedValue));
       
-      runOnJS(updateValue)(clampedValue);
-    })
-    .onEnd(() => {
-      isPressed.value = false;
-      translateX.value = ((value - min) / (max - min)) * (sliderWidth - knobSize);
-    });
+      onValueChange(clampedValue);
+    } else if (state === State.END || state === State.CANCELLED) {
+      setIsDragging(false);
+    }
+  };
 
-  React.useEffect(() => {
-    translateX.value = ((value - min) / (max - min)) * (sliderWidth - knobSize);
-  }, [value, min, max, sliderWidth]);
+  const knobStyle = {
+    ...styles.sliderKnob,
+    transform: [
+      { translateX: knobPosition },
+      { scale: isDragging ? 1.2 : 1 }
+    ],
+    backgroundColor: isDragging ? '#FFFFFF' : color,
+    borderColor: color,
+  };
+
+  const activeTrackStyle = {
+    ...styles.activeTrack,
+    width: knobPosition + knobSize / 2,
+    backgroundColor: color,
+  };
 
   return (
     <View style={styles.sliderContainer}>
       <Text style={styles.sliderLabel}>{label}</Text>
       <View style={styles.sliderWrapper}>
         <View style={[styles.sliderTrack, { width: sliderWidth }]}>
-          <Animated.View style={[styles.activeTrack, animatedTrackStyle]} />
-          <GestureDetector gesture={gesture}>
-            <Animated.View style={[styles.sliderKnob, animatedKnobStyle]} />
-          </GestureDetector>
+          <View style={activeTrackStyle} />
+          <PanGestureHandler onGestureEvent={handlePanGestureEvent}>
+            <View style={knobStyle} />
+          </PanGestureHandler>
         </View>
         <Text style={[styles.sliderValue, { color }]}>
           {value.toFixed(2)} {unit}
