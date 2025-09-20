@@ -11,37 +11,7 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import {
-  Trophy,
-  Target,
-  Calendar,
-  Award,
-  Star,
-  Zap,
-  TrendingUp,
-  Plus,
-  X,
-  Check,
-  Flame,
-  Coins,
-  Settings,
-  Calculator,
-  Leaf,
-  ChevronRight,
-  Crown,
-  Medal,
-  Shield,
-  Clock,
-  Coffee,
-  Sun,
-  Moon,
-  Heart,
-  Smartphone,
-  Home,
-  Users,
-  BookOpen,
-  Gift,
-} from 'lucide-react-native';
+import { Trophy, Target, Calendar, Award, Star, Zap, TrendingUp, Plus, X, Check, Flame, Coins, Settings, Calculator, Leaf, ChevronRight, Crown, Medal, Shield, Clock, Coffee, Sun, Moon, Heart, Smartphone, Chrome as Home, Users, BookOpen, Gift } from 'lucide-react-native';
 import { useGamification } from '@/context/GamificationContext';
 import { Goal } from '@/types/gamification';
 import Animated, {
