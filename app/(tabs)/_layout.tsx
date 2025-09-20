@@ -53,9 +53,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="gamification"
+        name="challenges"
         options={{
-          title: 'Progress',
+          title: 'Challenges',
           tabBarIcon: ({ size, color }) => (
             <Trophy size={size} color={color} />
           ),

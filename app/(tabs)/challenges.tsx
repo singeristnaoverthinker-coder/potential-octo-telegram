@@ -31,6 +31,16 @@ import {
   Crown,
   Medal,
   Shield,
+  Clock,
+  Coffee,
+  Sun,
+  Moon,
+  Heart,
+  Smartphone,
+  Home,
+  Users,
+  BookOpen,
+  Gift,
 } from 'lucide-react-native';
 import { useGamification } from '@/context/GamificationContext';
 import { Goal } from '@/types/gamification';
@@ -59,6 +69,16 @@ const iconMap: { [key: string]: React.ComponentType<any> } = {
   crown: Crown,
   medal: Medal,
   shield: Shield,
+  clock: Clock,
+  coffee: Coffee,
+  sun: Sun,
+  moon: Moon,
+  heart: Heart,
+  smartphone: Smartphone,
+  home: Home,
+  users: Users,
+  bookopen: BookOpen,
+  gift: Gift,
 };
 
 const goalTemplates = [
@@ -75,40 +95,51 @@ const goalTemplates = [
   },
   {
     title: 'Weekly Savings Goal',
-    description: 'Save ₱100 on electricity this week',
+    description: 'Save ₱50 on electricity this week',
     type: 'weekly' as const,
     category: 'cost' as const,
-    target: 100,
+    target: 50,
     unit: '₱',
     iconName: 'coins',
     color: '#10B981',
-    xpReward: 100,
+    xpReward: 75,
   },
   {
     title: 'Monthly Efficiency',
-    description: 'Reduce energy consumption by 10%',
+    description: 'Reduce energy consumption by 5%',
     type: 'monthly' as const,
     category: 'efficiency' as const,
-    target: 10,
+    target: 5,
     unit: '%',
     iconName: 'leaf',
     color: '#059669',
-    xpReward: 200,
+    xpReward: 150,
   },
   {
     title: 'Appliance Optimizer',
-    description: 'Optimize 5 appliances this week',
+    description: 'Optimize 3 appliances this week',
     type: 'weekly' as const,
     category: 'usage' as const,
-    target: 5,
+    target: 3,
     unit: 'appliances',
     iconName: 'settings',
     color: '#8B5CF6',
-    xpReward: 150,
+    xpReward: 100,
+  },
+  {
+    title: 'Quick Learner',
+    description: 'Complete 5 calculations today',
+    type: 'daily' as const,
+    category: 'usage' as const,
+    target: 5,
+    unit: 'calculations',
+    iconName: 'calculator',
+    color: '#F59E0B',
+    xpReward: 50,
   },
 ];
 
-export default function GamificationScreen() {
+export default function ChallengesScreen() {
   const {
     achievements,
     badges,
@@ -230,7 +261,7 @@ export default function GamificationScreen() {
           <View 
             style={[
               styles.xpProgress, 
-              { width: `${(userProgress.xp / userProgress.xpToNextLevel) * 100}%` }
+              { width: `${Math.min((userProgress.xp / userProgress.xpToNextLevel) * 100, 100)}%` }
             ]} 
           />
         </View>
@@ -265,7 +296,7 @@ export default function GamificationScreen() {
         <Text style={styles.sectionTitle}>Active Goals</Text>
         {goals.filter(g => g.isActive && !g.isCompleted).slice(0, 3).map((goal) => {
           const IconComponent = getIconComponent(goal.iconName);
-          const progress = (goal.current / goal.target) * 100;
+          const progress = Math.min((goal.current / goal.target) * 100, 100);
           
           return (
             <View key={goal.id} style={styles.goalItem}>
@@ -324,7 +355,7 @@ export default function GamificationScreen() {
     <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
       {achievements.map((achievement) => {
         const IconComponent = getIconComponent(achievement.iconName);
-        const progress = (achievement.criteria.current / achievement.criteria.target) * 100;
+        const progress = Math.min((achievement.criteria.current / achievement.criteria.target) * 100, 100);
         
         return (
           <View 
@@ -475,7 +506,7 @@ export default function GamificationScreen() {
 
       {goals.map((goal) => {
         const IconComponent = getIconComponent(goal.iconName);
-        const progress = (goal.current / goal.target) * 100;
+        const progress = Math.min((goal.current / goal.target) * 100, 100);
         const isExpired = new Date() > goal.endDate;
         
         return (
@@ -506,7 +537,7 @@ export default function GamificationScreen() {
               )}
             </View>
             
-            <View style={styles.goalProgress}>
+            <View style={styles.goalProgressSection}>
               <Text style={styles.goalProgressText}>
                 {goal.current}/{goal.target} {goal.unit} ({progress.toFixed(0)}%)
               </Text>
@@ -522,7 +553,7 @@ export default function GamificationScreen() {
             
             <View style={styles.goalFooter}>
               <Text style={styles.goalDates}>
-                {goal.endDate.toLocaleDateString()}
+                Ends: {goal.endDate.toLocaleDateString()}
               </Text>
               <Text style={styles.goalXp}>+{goal.xpReward} XP</Text>
             </View>
@@ -1192,6 +1223,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#8B5CF6',
+  },
+  goalProgressSection: {
+    marginBottom: 12,
   },
   goalProgressText: {
     fontSize: 14,
