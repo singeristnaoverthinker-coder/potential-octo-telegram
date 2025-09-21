@@ -53,6 +53,18 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="gamification"
+        options={{
+          title: 'Progress',
+          tabBarIcon: ({ size, color }) => (
+            <Trophy size={size} color={color} />
+          ),
+        }}
+        listeners={{
+          tabPress: handleTabPress,
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
