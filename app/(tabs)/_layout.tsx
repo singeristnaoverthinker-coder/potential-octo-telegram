@@ -53,18 +53,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="challenges"
-        options={{
-          title: 'Challenges',
-          tabBarIcon: ({ size, color }) => (
-            <Trophy size={size} color={color} />
-          ),
-        }}
-        listeners={{
-          tabPress: handleTabPress,
-        }}
-      />
-      <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
