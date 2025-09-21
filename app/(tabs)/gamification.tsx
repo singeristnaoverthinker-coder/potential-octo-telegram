@@ -547,9 +547,9 @@ export default function GamificationScreen() {
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <Trophy size={32} color="#FFD700" />
-          <Text style={styles.title}>Challenges</Text>
+          <Text style={styles.title}>Gamification</Text>
         </View>
-        <Text style={styles.subtitle}>Complete challenges and earn rewards</Text>
+        <Text style={styles.subtitle}>Track your energy efficiency journey</Text>
       </View>
 
       {/* Tab Navigation */}
