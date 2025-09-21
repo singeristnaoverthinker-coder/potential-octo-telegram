@@ -252,11 +252,35 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
           const today = new Date();
           const lastAction = streak.lastActionDate;
           
-          if (!lastAction || isConsecutiveDay(lastAction, today)) {
+          if (!lastAction) {
+            return {
+              ...streak,
+              currentStreak: 1,
+              longestStreak: Math.max(streak.longestStreak, 1),
+              lastActionDate: today,
+              isActive: true,
+            };
+          } else if (isConsecutiveDay(lastAction, today)) {
             return {
               ...streak,
               currentStreak: streak.currentStreak + 1,
               longestStreak: Math.max(streak.longestStreak, streak.currentStreak + 1),
+              lastActionDate: today,
+              isActive: true,
+            };
+          } else if (isSameDay(lastAction, today)) {
+            // Same day action - don't increment but keep active
+            return {
+              ...streak,
+              lastActionDate: today,
+              isActive: true,
+            };
+          } else {
+            // Streak broken - reset to 1
+            return {
+              ...streak,
+              currentStreak: 1,
+              longestStreak: Math.max(streak.longestStreak, streak.currentStreak),
               lastActionDate: today,
               isActive: true,
             };
@@ -295,12 +319,13 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   const addXp = (amount: number) => {
     setUserProgress(prev => {
       const newTotalXp = prev.totalXp + amount;
-      const newXp = prev.xp + amount;
+      let newXp = prev.xp + amount;
       let newLevel = prev.level;
-      let xpToNextLevel = prev.xpToNextLevel;
+      let xpToNextLevel = newLevel * 100;
       
       // Level up logic
       while (newXp >= xpToNextLevel) {
+        newXp -= xpToNextLevel;
         newLevel++;
         xpToNextLevel = newLevel * 100; // Each level requires 100 more XP
       }
@@ -312,7 +337,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         xp: newXp,
         totalXp: newTotalXp,
         level: newLevel,
-        xpToNextLevel,
+        xpToNextLevel: xpToNextLevel - newXp,
         rank,
       };
     });
@@ -327,6 +352,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     const diffTime = Math.abs(currentDate.getTime() - lastDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays === 1;
+  };
+
+  const isSameDay = (date1: Date, date2: Date): boolean => {
+    return date1.toDateString() === date2.toDateString();
   };
 
   const getRank = (level: number): string => {
