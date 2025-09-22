@@ -230,7 +230,7 @@ export default function GamificationScreen() {
           <View 
             style={[
               styles.xpProgress, 
-              { width: `${Math.min((userProgress.xp / (userProgress.xp + userProgress.xpToNextLevel)) * 100, 100)}%` }
+              { width: `${(userProgress.xp / userProgress.xpToNextLevel) * 100}%` }
             ]} 
           />
         </View>
@@ -265,7 +265,7 @@ export default function GamificationScreen() {
         <Text style={styles.sectionTitle}>Active Goals</Text>
         {goals.filter(g => g.isActive && !g.isCompleted).slice(0, 3).map((goal) => {
           const IconComponent = getIconComponent(goal.iconName);
-          const progress = Math.min((goal.current / goal.target) * 100, 100);
+          const progress = (goal.current / goal.target) * 100;
           
           return (
             <View key={goal.id} style={styles.goalItem}>
@@ -324,7 +324,7 @@ export default function GamificationScreen() {
     <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
       {achievements.map((achievement) => {
         const IconComponent = getIconComponent(achievement.iconName);
-        const progress = Math.min((achievement.criteria.current / achievement.criteria.target) * 100, 100);
+        const progress = (achievement.criteria.current / achievement.criteria.target) * 100;
         
         return (
           <View 
@@ -475,7 +475,7 @@ export default function GamificationScreen() {
 
       {goals.map((goal) => {
         const IconComponent = getIconComponent(goal.iconName);
-        const progress = Math.min((goal.current / goal.target) * 100, 100);
+        const progress = (goal.current / goal.target) * 100;
         const isExpired = new Date() > goal.endDate;
         
         return (
@@ -506,7 +506,7 @@ export default function GamificationScreen() {
               )}
             </View>
             
-            <View style={styles.goalProgressSection}>
+            <View style={styles.goalProgress}>
               <Text style={styles.goalProgressText}>
                 {goal.current}/{goal.target} {goal.unit} ({progress.toFixed(0)}%)
               </Text>
@@ -522,7 +522,7 @@ export default function GamificationScreen() {
             
             <View style={styles.goalFooter}>
               <Text style={styles.goalDates}>
-                Ends: {goal.endDate.toLocaleDateString()}
+                {goal.endDate.toLocaleDateString()}
               </Text>
               <Text style={styles.goalXp}>+{goal.xpReward} XP</Text>
             </View>
@@ -889,7 +889,7 @@ const styles = StyleSheet.create({
     color: '#1F2937',
     marginBottom: 4,
   },
-  goalProgressSection: {
+  goalProgress: {
     fontSize: 14,
     color: '#6B7280',
     marginBottom: 8,
