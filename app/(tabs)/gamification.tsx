@@ -314,11 +314,7 @@ export default function GamificationScreen() {
           );
         })}
         {achievements.filter(a => a.isUnlocked).length === 0 && (
-          <View style={styles.emptyStateContainer}>
-            <Trophy size={32} color="#9CA3AF" />
-            <Text style={styles.emptyText}>Complete actions to unlock achievements!</Text>
-            <Text style={styles.emptySubtext}>Start by opening the app daily or completing calculations</Text>
-          </View>
+          <Text style={styles.emptyText}>Complete actions to unlock achievements!</Text>
         )}
       </View>
     </ScrollView>
@@ -551,9 +547,9 @@ export default function GamificationScreen() {
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <Trophy size={32} color="#FFD700" />
-          <Text style={styles.title}>Challenges</Text>
+          <Text style={styles.title}>Gamification</Text>
         </View>
-        <Text style={styles.subtitle}>Complete challenges and earn rewards</Text>
+        <Text style={styles.subtitle}>Track your energy efficiency journey</Text>
       </View>
 
       {/* Tab Navigation */}
@@ -943,18 +939,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#9CA3AF',
     textAlign: 'center',
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  emptySubtext: {
-    fontSize: 12,
-    color: '#9CA3AF',
-    textAlign: 'center',
     fontStyle: 'italic',
-  },
-  emptyStateContainer: {
-    alignItems: 'center',
-    paddingVertical: 20,
   },
   achievementCard: {
     backgroundColor: '#FFFFFF',
