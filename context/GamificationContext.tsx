@@ -101,19 +101,19 @@ const defaultAchievements: Achievement[] = [
   },
   {
     id: 'calculator_pro',
-    description: 'Save ₱50 on electricity this week',
+    title: 'Calculator Pro',
     description: 'Complete 5 calculations',
     category: 'behavior',
-    target: 50,
+    iconName: 'calculator',
     color: '#059669',
     isUnlocked: false,
     criteria: { type: 'calculations', target: 5, current: 0 },
     xpReward: 75,
   },
-    description: 'Reduce energy consumption by 5%',
+  {
     id: 'energy_saver',
     title: 'Energy Conscious',
-    target: 5,
+    description: 'Reduce energy consumption by 5%',
     category: 'behavior',
     iconName: 'leaf',
     color: '#059669',
@@ -369,24 +369,44 @@ const defaultStreaks: Streak[] = [
   },
   {
     id: 'goal_streak',
-    description: 'Optimize 3 appliances this week',
+    name: 'Goal Streak',
     description: 'Complete goals consistently',
     currentStreak: 0,
-    target: 3,
+    longestStreak: 0,
     isActive: false,
     iconName: 'target',
+    color: '#EF4444',
+  },
+];
+
+const defaultGoals: Goal[] = [
+  {
+    id: 'weekly_optimization',
+    title: 'Weekly Optimization',
+    description: 'Optimize 3 appliances this week',
+    type: 'weekly' as const,
+    category: 'efficiency' as const,
+    target: 3,
+    current: 0,
+    unit: 'appliances',
+    iconName: 'settings',
+    color: '#10B981',
     xpReward: 100,
+    isCompleted: false,
   },
   {
+    id: 'daily_calculations',
     title: 'Quick Learner',
     description: 'Complete 5 calculations today',
     type: 'daily' as const,
     category: 'usage' as const,
     target: 5,
+    current: 0,
     unit: 'calculations',
     iconName: 'calculator',
     color: '#2563EB',
     xpReward: 50,
+    isCompleted: false,
   },
 ];
 
@@ -394,7 +414,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   const [achievements, setAchievements] = useState<Achievement[]>(defaultAchievements);
   const [badges, setBadges] = useState<Badge[]>(defaultBadges);
   const [streaks, setStreaks] = useState<Streak[]>(defaultStreaks);
-  const [goals, setGoals] = useState<Goal[]>([]);
+  const [goals, setGoals] = useState<Goal[]>(defaultGoals);
   const [userProgress, setUserProgress] = useState<UserProgress>({
     level: 1,
     xp: 0,
