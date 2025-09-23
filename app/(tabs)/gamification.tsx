@@ -230,7 +230,7 @@ export default function GamificationScreen() {
           <View 
             style={[
               styles.xpProgress, 
-              { width: `${(userProgress.xp / userProgress.xpToNextLevel) * 100}%` }
+              { width: `${Math.min((userProgress.xp / (userProgress.xpToNextLevel + userProgress.xp)) * 100, 100)}%` }
             ]} 
           />
         </View>
@@ -281,7 +281,7 @@ export default function GamificationScreen() {
                   <View 
                     style={[
                       styles.progressFill, 
-                      { width: `${progress}%`, backgroundColor: goal.color }
+                      { width: `${Math.min(progress, 100)}%`, backgroundColor: goal.color }
                     ]} 
                   />
                 </View>
@@ -372,7 +372,7 @@ export default function GamificationScreen() {
                   <View 
                     style={[
                       styles.progressFill, 
-                      { width: `${progress}%`, backgroundColor: achievement.color }
+                      { width: `${Math.min(progress, 100)}%`, backgroundColor: achievement.color }
                     ]} 
                   />
                 </View>
@@ -514,7 +514,7 @@ export default function GamificationScreen() {
                 <View 
                   style={[
                     styles.progressFill, 
-                    { width: `${progress}%`, backgroundColor: goal.color }
+                    { width: `${Math.min(progress, 100)}%`, backgroundColor: goal.color }
                   ]} 
                 />
               </View>
@@ -522,7 +522,7 @@ export default function GamificationScreen() {
             
             <View style={styles.goalFooter}>
               <Text style={styles.goalDates}>
-                {goal.endDate.toLocaleDateString()}
+                Ends: {goal.endDate.toLocaleDateString()}
               </Text>
               <Text style={styles.goalXp}>+{goal.xpReward} XP</Text>
             </View>
@@ -547,9 +547,9 @@ export default function GamificationScreen() {
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <Trophy size={32} color="#FFD700" />
-          <Text style={styles.title}>Gamification</Text>
+          <Text style={styles.title}>Challenges</Text>
         </View>
-        <Text style={styles.subtitle}>Track your energy efficiency journey</Text>
+        <Text style={styles.subtitle}>Complete challenges and earn rewards</Text>
       </View>
 
       {/* Tab Navigation */}

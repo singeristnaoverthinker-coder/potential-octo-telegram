@@ -34,76 +34,142 @@ const defaultAchievements: Achievement[] = [
     xpReward: 50,
   },
   {
+    id: 'welcome',
+    title: 'Welcome!',
+    description: 'Open the app for the first time',
+    category: 'milestone',
+    iconName: 'star',
+    color: '#2563EB',
+    isUnlocked: false,
+    criteria: { type: 'app_opens', target: 1, current: 0 },
+    xpReward: 25,
+  },
+  {
+    id: 'early_bird',
+    title: 'Early Bird',
+    description: 'Open the app before 9 AM',
+    category: 'behavior',
+    iconName: 'sun',
+    color: '#F59E0B',
+    isUnlocked: false,
+    criteria: { type: 'early_opens', target: 1, current: 0 },
+    xpReward: 30,
+  },
+  {
+    id: 'explorer',
+    title: 'Explorer',
+    description: 'Select your first appliance',
+    category: 'milestone',
+    iconName: 'zap',
+    color: '#8B5CF6',
+    isUnlocked: false,
+    criteria: { type: 'appliances_selected', target: 1, current: 0 },
+    xpReward: 40,
+  },
+  {
     id: 'energy_saver',
     title: 'Energy Saver',
-    description: 'Reduce monthly costs by ₱500',
+    description: 'Reduce monthly costs by ₱200',
     category: 'savings',
     iconName: 'leaf',
     color: '#059669',
     isUnlocked: false,
-    criteria: { type: 'savings', target: 500, current: 0 },
-    xpReward: 200,
+    criteria: { type: 'savings', target: 200, current: 0 },
+    xpReward: 120,
   },
   {
     id: 'week_warrior',
-    title: 'Week Warrior',
-    description: 'Use the app for 7 consecutive days',
+    title: 'Consistent',
+    description: 'Use the app for 3 consecutive days',
     category: 'time',
     iconName: 'calendar',
     color: '#8B5CF6',
     isUnlocked: false,
-    criteria: { type: 'streak_days', target: 7, current: 0 },
-    xpReward: 150,
+    criteria: { type: 'streak_days', target: 3, current: 0 },
+    xpReward: 75,
   },
   {
     id: 'appliance_master',
     title: 'Appliance Master',
-    description: 'Track 10 different appliances',
+    description: 'Track 5 different appliances',
     category: 'behavior',
     iconName: 'settings',
     color: '#F59E0B',
     isUnlocked: false,
-    criteria: { type: 'appliances_tracked', target: 10, current: 0 },
-    xpReward: 300,
+    criteria: { type: 'appliances_tracked', target: 5, current: 0 },
+    xpReward: 150,
   },
   {
     id: 'goal_achiever',
     title: 'Goal Achiever',
-    description: 'Complete 5 goals',
+    description: 'Complete 3 goals',
     category: 'milestone',
     iconName: 'target',
     color: '#EF4444',
     isUnlocked: false,
-    criteria: { type: 'goals_completed', target: 5, current: 0 },
-    xpReward: 250,
+    criteria: { type: 'goals_completed', target: 3, current: 0 },
+    xpReward: 200,
   },
 ];
 
 const defaultBadges: Badge[] = [
   {
-    id: 'efficiency_bronze',
-    name: 'Efficiency Explorer',
-    description: 'Started your energy efficiency journey',
+    id: 'newcomer',
+    name: 'Newcomer',
+    description: 'Welcome to the app!',
     tier: 'bronze',
-    category: 'efficiency',
+    category: 'milestone',
     iconName: 'award',
     color: '#CD7F32',
     isEarned: false,
-    requirements: 'Complete first calculation',
+    requirements: 'Open the app',
   },
   {
-    id: 'efficiency_silver',
-    name: 'Efficiency Enthusiast',
-    description: 'Consistently tracking energy usage',
+    id: 'first_timer',
+    name: 'First Timer',
+    description: 'Completed first calculation',
+    tier: 'bronze',
+    category: 'milestone',
+    iconName: 'award',
+    color: '#CD7F32',
+    isEarned: false,
+    requirements: 'Complete 1 calculation',
+  },
+  {
+    id: 'morning_person',
+    name: 'Morning Person',
+    description: 'Early riser energy saver',
+    tier: 'bronze',
+    category: 'behavior',
+    iconName: 'sun',
+    color: '#CD7F32',
+    isEarned: false,
+    requirements: 'Open app before 9 AM',
+  },
+  {
+    id: 'dedicated',
+    name: 'Dedicated',
+    description: 'Consistent app usage',
+    tier: 'bronze',
+    category: 'behavior',
+    iconName: 'calendar',
+    color: '#CD7F32',
+    isEarned: false,
+    requirements: 'Use app 3 days in a row',
+  },
+  {
+    id: 'efficiency_explorer',
+    name: 'Efficiency Explorer',
+    description: 'Started tracking appliances',
     tier: 'silver',
     category: 'efficiency',
     iconName: 'award',
     color: '#C0C0C0',
     isEarned: false,
-    requirements: 'Use app for 14 days',
+    requirements: 'Track 3 appliances',
   },
   {
-    id: 'efficiency_gold',
+    id: 'efficiency_expert',
     name: 'Efficiency Expert',
     description: 'Master of energy optimization',
     tier: 'gold',
@@ -111,40 +177,29 @@ const defaultBadges: Badge[] = [
     iconName: 'award',
     color: '#FFD700',
     isEarned: false,
-    requirements: 'Complete 10 goals and save ₱1000',
+    requirements: 'Track 10 appliances and save ₱500',
   },
   {
-    id: 'saver_bronze',
-    name: 'Money Saver',
-    description: 'Started saving on electricity bills',
+    id: 'penny_saver',
+    name: 'Penny Saver',
+    description: 'Started saving money',
     tier: 'bronze',
     category: 'savings',
     iconName: 'coins',
     color: '#CD7F32',
     isEarned: false,
-    requirements: 'Save ₱100 monthly',
+    requirements: 'Save ₱50 monthly',
   },
   {
-    id: 'saver_silver',
-    name: 'Smart Spender',
+    id: 'smart_saver',
+    name: 'Smart Saver',
     description: 'Significant savings achieved',
     tier: 'silver',
     category: 'savings',
     iconName: 'coins',
     color: '#C0C0C0',
     isEarned: false,
-    requirements: 'Save ₱500 monthly',
-  },
-  {
-    id: 'saver_gold',
-    name: 'Savings Champion',
-    description: 'Exceptional cost optimization',
-    tier: 'gold',
-    category: 'savings',
-    iconName: 'coins',
-    color: '#FFD700',
-    isEarned: false,
-    requirements: 'Save ₱1000 monthly',
+    requirements: 'Save ₱200 monthly',
   },
 ];
 
@@ -252,11 +307,33 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
           const today = new Date();
           const lastAction = streak.lastActionDate;
           
-          if (!lastAction || isConsecutiveDay(lastAction, today)) {
+          if (!lastAction) {
+            // First time action
+            return {
+              ...streak,
+              currentStreak: 1,
+              longestStreak: Math.max(streak.longestStreak, 1),
+              lastActionDate: today,
+              isActive: true,
+            };
+          } else if (isSameDay(lastAction, today)) {
+            // Same day, don't increment
+            return streak;
+          } else if (isConsecutiveDay(lastAction, today)) {
+            // Consecutive day
             return {
               ...streak,
               currentStreak: streak.currentStreak + 1,
               longestStreak: Math.max(streak.longestStreak, streak.currentStreak + 1),
+              lastActionDate: today,
+              isActive: true,
+            };
+          } else {
+            // Streak broken, reset
+            return {
+              ...streak,
+              currentStreak: 1,
+              longestStreak: streak.longestStreak,
               lastActionDate: today,
               isActive: true,
             };
@@ -295,14 +372,15 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
   const addXp = (amount: number) => {
     setUserProgress(prev => {
       const newTotalXp = prev.totalXp + amount;
-      const newXp = prev.xp + amount;
+      let newXp = prev.xp + amount;
       let newLevel = prev.level;
-      let xpToNextLevel = prev.xpToNextLevel;
+      let xpToNextLevel = newLevel * 100;
       
       // Level up logic
       while (newXp >= xpToNextLevel) {
+        newXp -= xpToNextLevel;
         newLevel++;
-        xpToNextLevel = newLevel * 100; // Each level requires 100 more XP
+        xpToNextLevel = newLevel * 100;
       }
       
       const rank = getRank(newLevel);
@@ -312,7 +390,7 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
         xp: newXp,
         totalXp: newTotalXp,
         level: newLevel,
-        xpToNextLevel,
+        xpToNextLevel: xpToNextLevel - newXp,
         rank,
       };
     });
@@ -327,6 +405,10 @@ export function GamificationProvider({ children }: { children: ReactNode }) {
     const diffTime = Math.abs(currentDate.getTime() - lastDate.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays === 1;
+  };
+
+  const isSameDay = (date1: Date, date2: Date): boolean => {
+    return date1.toDateString() === date2.toDateString();
   };
 
   const getRank = (level: number): string => {
