@@ -14,12 +14,12 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  interpolateColor,
   runOnJS,
-  useAnimatedGestureHandler,
 } from 'react-native-reanimated';
 import { Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { PanGestureHandler, State, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -38,74 +38,61 @@ function CustomSlider({ label, value, min, max, step, unit, color, onValueChange
   const sliderWidth = Math.min(screenWidth - 80, 300);
   const knobSize = 28;
   
-  const isDragging = useSharedValue(false);
-  const translateX = useSharedValue(((value - min) / (max - min)) * (sliderWidth - knobSize));
-  const startPosition = useSharedValue(0);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [knobPosition, setKnobPosition] = React.useState(((value - min) / (max - min)) * (sliderWidth - knobSize));
 
   React.useEffect(() => {
-    translateX.value = ((value - min) / (max - min)) * (sliderWidth - knobSize);
+    setKnobPosition(((value - min) / (max - min)) * (sliderWidth - knobSize));
   }, [value, min, max, sliderWidth]);
 
-  const updateValue = (newX: number) => {
-    'worklet';
-    const clampedX = Math.max(0, Math.min(sliderWidth - knobSize, newX));
-    const newValue = min + (clampedX / (sliderWidth - knobSize)) * (max - min);
-    const steppedValue = Math.round(newValue / step) * step;
-    const finalValue = Math.max(min, Math.min(max, steppedValue));
+  const handlePanGestureEvent = (event: any) => {
+    const { translationX, state } = event.nativeEvent;
     
-    runOnJS(onValueChange)(finalValue);
+    if (state === State.BEGAN) {
+      setIsDragging(true);
+      if (Platform.OS !== 'web') {
+        try {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        } catch (error) {
+          // Haptics not available
+        }
+      }
+    } else if (state === State.ACTIVE) {
+      const newX = Math.max(0, Math.min(sliderWidth - knobSize, knobPosition + translationX));
+      const newValue = min + (newX / (sliderWidth - knobSize)) * (max - min);
+      const steppedValue = Math.round(newValue / step) * step;
+      const clampedValue = Math.max(min, Math.min(max, steppedValue));
+      
+      onValueChange(clampedValue);
+    } else if (state === State.END || state === State.CANCELLED) {
+      setIsDragging(false);
+    }
   };
 
-  const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
-    onStart: () => {
-      isDragging.value = true;
-      startPosition.value = translateX.value;
-      if (Platform.OS !== 'web') {
-        runOnJS(() => {
-          try {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          } catch (error) {
-            // Haptics not available
-          }
-        })();
-      }
-    },
-    onActive: (event) => {
-      const newX = startPosition.value + event.translationX;
-      translateX.value = Math.max(0, Math.min(sliderWidth - knobSize, newX));
-      updateValue(translateX.value);
-    },
-    onEnd: () => {
-      isDragging.value = false;
-    },
-  });
+  const knobStyle = {
+    ...styles.sliderKnob,
+    transform: [
+      { translateX: knobPosition },
+      { scale: isDragging ? 1.2 : 1 }
+    ],
+    backgroundColor: isDragging ? '#FFFFFF' : color,
+    borderColor: color,
+  };
 
-  const animatedKnobStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: translateX.value },
-        { scale: withSpring(isDragging.value ? 1.2 : 1) }
-      ],
-      backgroundColor: isDragging.value ? '#FFFFFF' : color,
-      borderColor: color,
-    };
-  });
-
-  const animatedTrackStyle = useAnimatedStyle(() => {
-    return {
-      width: translateX.value + knobSize / 2,
-      backgroundColor: color,
-    };
-  });
+  const activeTrackStyle = {
+    ...styles.activeTrack,
+    width: knobPosition + knobSize / 2,
+    backgroundColor: color,
+  };
 
   return (
     <View style={styles.sliderContainer}>
       <Text style={styles.sliderLabel}>{label}</Text>
       <View style={styles.sliderWrapper}>
         <View style={[styles.sliderTrack, { width: sliderWidth }]}>
-          <Animated.View style={[styles.activeTrack, animatedTrackStyle]} />
-          <PanGestureHandler onGestureEvent={gestureHandler}>
-            <Animated.View style={[styles.sliderKnob, animatedKnobStyle]} />
+          <View style={activeTrackStyle} />
+          <PanGestureHandler onGestureEvent={handlePanGestureEvent}>
+            <View style={knobStyle} />
           </PanGestureHandler>
         </View>
         <Text style={[styles.sliderValue, { color }]}>
