@@ -86,8 +86,8 @@ export default function SummaryScreen() {
           <View style={styles.logoContainer}>
             <Zap size={40} color="#2563EB" />
           </View>
-          <Text style={styles.appTitle}>KuryenT.I.P.I.D.</Text>
-          <Text style={styles.appSubtitle}>Electricity Consumption Calculator</Text>
+          <Text style={styles.appTitle}>Project BEAM</Text>
+          <Text style={styles.appSubtitle}>Budget-Efficient Appliance Monitor</Text>
         </Animated.View>
 
         <View style={styles.emptyState}>
@@ -140,8 +140,8 @@ export default function SummaryScreen() {
         <View style={styles.logoContainer}>
           <Zap size={40} color="#2563EB" />
         </View>
-        <Text style={styles.appTitle}>KuryenT.I.P.I.D.</Text>
-        <Text style={styles.appSubtitle}>Technology for Intelligent Power & Informed Decisions</Text>
+        <Text style={styles.appTitle}>Project BEAM</Text>
+        <Text style={styles.appSubtitle}>Budget-Efficient Appliance Monitor</Text>
       </Animated.View>
 
       <View style={styles.summaryCard}>
